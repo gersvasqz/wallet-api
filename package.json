@@ -10,7 +10,7 @@
     "dev": "npm run prettier && npm run eslint && nodemon src/server.js --exec babel-node",
     "prettier": "node_modules/.bin/prettier --check src/**/*.js --write",
     "eslint": "node_modules/.bin/eslint src/**/*.js --ignore-pattern \"node_modules/\"",
-    "docs": "./node_modules/.bin/apidoc -i src/docs -o public/apidoc/",
+    "docs": "./node_modules/.bin/apidoc -i src/ -o public/apidoc/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
