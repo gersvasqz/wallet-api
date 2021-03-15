@@ -1,23 +1,32 @@
-const soap = require("soap");
+import { createClientAsync } from "soap";
 
-// const url = "http://127.0.0.1:1337/wallet?wsdl";
-const url = "http://127.0.0.1:1337/testService?wsdl";
+const url = "http://localhost:8000/wallet?wsdl";
 
-const soapService = (operation, data) => {
-  console.log("saliendo al soap", url);
-  // const args = { operation, data };
-  return new Promise((resolve) => {
-    soap.createClientAsync(url, (err, client) => {
-      if (err) console.log("error del client", err);
-      else {
-        client.test1({ myArg1: "hola", myArg2: "mundo" }, (err2, result) => {
-          if (err) console.log("error del soap", err2.toString());
-          console.log("llego del soap", result);
-          resolve(result);
-        });
-      }
+const callback = (err, result, res) => {
+  if (err) {
+    console.error(
+      `${new Date().toISOString()} -- SOAP error --\n${err.toString()}\n________\n`
+    );
+    res({
+      error: true,
+      errors: [],
+      msg: err.toString(),
     });
-  });
+  } else res(result);
+};
+
+const soapService = async (operation, data) => {
+  const client = await createClientAsync(url);
+  if (!client[operation]) {
+    return {
+      error: true,
+      errors: [],
+      msg: "Invalid operation",
+    };
+  }
+  return new Promise((res) =>
+    client[operation](data, (e, r) => callback(e, r, res))
+  );
 };
 
 export default soapService;
