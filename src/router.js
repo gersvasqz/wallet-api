@@ -12,15 +12,16 @@ router.post("/api/recharge", (req, res) =>
 );
 
 router.post("/api/payment", (req, res) => {
-  res.cookie("auth-wallet", Math.round(Math.random() * 999999), {
+  const session = Math.round(Math.random() * 999999);
+  res.cookie("auth-wallet", session, {
     expire: new Date().setMinutes(new Date().getMinutes() + 10),
   });
-  req.body.session = req.cookies["auth-wallet"];
+  req.body.session = session;
   controller(req.body, res, "PayWithWallet", 200);
 });
 
 router.get("/api/confirm-token/:token", (req, res) => {
-  req.params.session = req.cookies["auth-wallet"];
+  req.params.session = req.headers["auth-wallet"];
   controller(req.params, res, "ConfirmToken", 200);
 });
 

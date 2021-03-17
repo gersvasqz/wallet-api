@@ -1,9 +1,21 @@
-const valid = ({ dni, name, email, phone, value }, operation) => {
+const valid = (
+  { dni, name, email, phone, value, token, session },
+  operation
+) => {
   const errors = [];
-  if (operation === "ConfirmToken") return errors;
+  const json = {
+    dni,
+    name,
+    email,
+    phone: Number(phone),
+    value: Number(value),
+    token,
+    session,
+  };
+  if (operation === "ConfirmToken") return { errors, json };
   if (!dni) errors.push("dni is required");
   if (!phone) errors.push("phone is required");
-  if (!Number.isInteger(phone)) errors.push("invalid phone");
+  if (typeof Number(phone) !== "number") errors.push("invalid phone");
   if (operation === "RegisterClient") {
     if (!name) errors.push("name is required");
     if (!email) errors.push("email is required");
@@ -15,10 +27,11 @@ const valid = ({ dni, name, email, phone, value }, operation) => {
       errors.push("invalid email");
   } else if (operation !== "GetBalance") {
     if (!value) errors.push("value is required");
-    else if (typeof value !== "number") errors.push("invalid value");
+    else if (typeof Number(value) !== "number") errors.push("invalid value");
+    else if (Number(value) < 0) errors.push("invalid value");
   }
 
-  return errors;
+  return { errors, json };
 };
 
 export default valid;
