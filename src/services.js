@@ -1,6 +1,6 @@
 import { createClientAsync } from "soap";
 
-const url = "http://localhost:8000/wallet?wsdl";
+const url = `http://${process.env.HOST_SOAP}?wsdl`;
 
 const callback = (err, result, res) => {
   if (err) {
