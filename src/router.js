@@ -3,6 +3,10 @@ import controller from "./controller";
 
 const router = Router();
 
+router.get("/", (_, res) => {
+  res.json({ msg: "ok" });
+});
+
 router.post("/api/client", (req, res) =>
   controller(req.body, res, "RegisterClient", 201)
 );

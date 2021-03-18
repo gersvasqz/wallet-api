@@ -1,4 +1,7 @@
 import { createClientAsync } from "soap";
+import { config } from "dotenv";
+
+config();
 
 const url = `http://${process.env.HOST_SOAP}?wsdl`;
 
@@ -16,17 +19,25 @@ const callback = (err, result, res) => {
 };
 
 const soapService = async (operation, data) => {
-  const client = await createClientAsync(url);
-  if (!client[operation]) {
+  try {
+    const client = await createClientAsync(url);
+    if (!client[operation]) {
+      return {
+        error: true,
+        errors: [],
+        msg: "Invalid operation",
+      };
+    }
+    return new Promise((res) =>
+      client[operation](data, (e, r) => callback(e, r, res))
+    );
+  } catch (e) {
     return {
       error: true,
-      errors: [],
+      errors: [e.toString()],
       msg: "Invalid operation",
     };
   }
-  return new Promise((res) =>
-    client[operation](data, (e, r) => callback(e, r, res))
-  );
 };
 
 export default soapService;
